@@ -16,7 +16,7 @@ class SocketManager {
     this.serverTimeOrigin = 0;
   }
   connect(url){
-    const socketUrl = url || window.location.href.replace(/^http/, 'ws');
+    const socketUrl = url || window.location.origin.replace(/^http/, 'ws');
     this.socket = new WebSocket(socketUrl);
     if(!this.socket){return;}
 

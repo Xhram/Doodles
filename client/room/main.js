@@ -1,5 +1,5 @@
 let player = {
-    name: input("Enter your name"),
+    name: prompt("Enter your name"),
     score: 0,
     id: null,
 }
@@ -24,6 +24,7 @@ const input = new InputManager({
         pen.lift();
     },
     onMouseLeave: (event) => {
+        console.log("left")
         pen.lift();
     }
 });
@@ -105,6 +106,20 @@ addChat("hudhuidhewiufh", "Bart")*/
 
 socket.connect();
 socket.onConnect(() => {
+    if(getRoomDetails().roomId != '0') {
+        socket.send({
+            type: "init",
+            joinMethod: "joinRoom",
+            roomId: getRoomDetails().roomId,
+        });
+    } else {
+        socket.send({
+            type: "init",
+            joinMethod: "createRoom",
+            name: player.name,
+            roomName: prompt("Enter a room name"),
+        });
+    }
     socket.batch({
         type: "init",
     });

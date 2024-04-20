@@ -1,7 +1,7 @@
 const fs = require('fs');
 const http = require('http');
 var url = require('url');
-const ws = require('ws');
+const ws = require('websocket');
 const port = 8080;
 
 
@@ -60,12 +60,12 @@ function Request(request,response){
 			package = {
 				rooms:[]
 			}
-			for(var i = 0; i<randInt(3,15);i++){
+			for(var i = 0; i<randInt(3,100);i++){
 				package.rooms.push({
 					name:"test server " + i,
 					playerCount:randInt(0,8),
 					round:randInt(0,3),
-					roomId:i+4
+					roomId:i
 				})
 			}
 			for(var i = 0; i < Rooms.length; i++){
@@ -127,8 +127,9 @@ function randInt(min, max){
 
 var server = http.createServer(Request);
 server.listen(port);
+var webSocketServer = new ws.({httpServer:server});
 console.log("Server is running")
-webSocketServer = new ws.WebSocket.WebSocketServer({server})
+
 var Rooms =[];
 var Clients = [];
 
@@ -215,7 +216,10 @@ class Room {
 		this.word = words[randInt(0,words.length-1)]
 		var newIndex = this.clients.indexof(this.drawing) + 1;
 		if(newIndex >= this.clients.length){
-			nextRound()
+			sendPackageToAllInRoom({
+				type:"nextRound"
+			})
+			setTimeout(nextRound(),5000)
 			return;
 		}
 		this.drawing = this.clients[newIndex]
@@ -228,10 +232,23 @@ class Room {
 			type:"start",
 			drawing:this.drawing.id
 		},this.drawing)
-		this.clock = Data.now() + 90 * 1000
+		this.clock = Data.now() + 60 * 1000
 		this.autoCheckTimeout = setTimeout(this.tryNextTurn,90*1000)
 	}
 	nextRound(){
+		this.round++;
+		this.word = words[randInt(0,words.length-1)]
+		this.drawing = this.clients[0]
+
+		this.drawing.send({
+			type:"start",
+			drawing:this.drawing.id,
+			word:this.word
+		})
+		this.sendPackageToAllInRoomBut({
+			type:"start",
+			drawing:this.drawing.id
+		},this.drawing)
 		
 	}
 	addClient(ws){
@@ -323,7 +340,9 @@ class Client {
 }
 
 
-function webSocketConnect(webSocket){
+function webSocketConnect(req){
+	var webSocket = req.accept()
+	console.log("dfsdfsdf")
 	webSocket.hasInit = false;
 	webSocket.on('message', (data) => {
 		var package;
@@ -418,4 +437,4 @@ function webSocketConnect(webSocket){
 
 
 
-webSocketServer.on("connection",webSocketConnect)
+webSocketServer.on("request",webSocketConnect)

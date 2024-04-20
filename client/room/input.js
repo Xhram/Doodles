@@ -20,7 +20,7 @@ class InputManager {
             bindedElement.addEventListener("mousedown", this.mouse.onMouseDown);
             bindedElement.addEventListener("mousemove", this.mouse.onMouseMove);
             bindedElement.addEventListener("mouseup", this.mouse.onMouseUp);
-            bindedElement.addEventListener("onmouseout", this.mouse.onMouseLeave);
+            bindedElement.addEventListener("mouseleave", this.mouse.onMouseLeave);
         } else {
             bindedElement.addEventListener("touchstart", this.mouse.onMouseDown);
             bindedElement.addEventListener("touchmove", this.mouse.onMouseMove);

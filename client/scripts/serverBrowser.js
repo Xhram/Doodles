@@ -8,7 +8,7 @@ async function loadServerList(){
 	var out = "";
 	for(var i = 0;i<rooms.length;i++){
 		out += `
-        <div class="serverbutton" onmousedown="joinServer(${rooms[i].id})">
+        <div class="serverbutton" onmousedown="joinServer(${rooms[i].roomId})">
 			<div class="servername">${rooms[i].name}</div>
 			<div class="playercount">${(rooms[i].playerCount<10)?"0":"" + rooms[i].playerCount}/10</div>
 			<span class="preserveSpaces">  |  </span>
@@ -18,7 +18,13 @@ async function loadServerList(){
 	serverList.innerHTML = out
 }
 
-async function joinServer(serverId){
-	window.location = window.location.href = window.location.origin + "/room/index.html?roomId=" + btoa(serverId)
+function joinServer(serverId){
+	window.location.href = window.location.origin + "/room/index.html?roomId=" + btoa(serverId)
 }
 loadServerList()
+
+
+function createServer(){
+	var serverName = prompt("Enter The Name For The Server:")
+	window.location.href = window.location.origin + "/room/index.html?serverName=" + btoa(serverName)
+}
