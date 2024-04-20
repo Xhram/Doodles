@@ -1,8 +1,9 @@
 let player = {
-    name: prompt("Enter your name"),
+    name: "name",
     score: 0,
     id: null,
 }
+let wordToGuess = "";
 
 const drawArea = document.getElementById("drawArea");
 document.oncontextmenu = drawArea.oncontextmenu = function() {return false;}
@@ -24,7 +25,6 @@ const input = new InputManager({
         pen.lift();
     },
     onMouseLeave: (event) => {
-        console.log("left")
         pen.lift();
     }
 });
@@ -56,11 +56,15 @@ function setPlayers(players = []) {
         playersContainer.appendChild(playerDiv);
     }
 }
-/*setPlayers([
-    {name: "abrt",score:1000},
-    {name: "jdeidhuiewhdfeu", score:10}
-]);*/
+setPlayers([
+    {name: "Norbert",score:1700},
+    {name: "Isaac", score:-10},
+    {name: "Person 1", score:-1000},
+    {name: "Danni", score:500}
+]);
 function chat(element) {
+    if(element.value.trim() == "") return;
+    if(element.value.trim() == wordToGuess) return win();
     addChat(element.value, "You");
     element.value = "";
 
@@ -80,15 +84,16 @@ function addChat(message = "", username = "#-no name-") {
         msgElement.appendChild(userElement);
     }
     
-    const messageText = document.createTextNode(message);
-    msgElement.appendChild(messageText);
+    //const messageText = document.createTextNode(message);
+    //msgElement.appendChild(messageText);
+    msgElement.innerHTML += message;
     
     chatsContainer.appendChild(msgElement);
 }
 function setWordToGuess(word = "",show = false) {
     const wordToGuessElement = document.getElementById("wordToGuess");
     if(show) {
-        if(word != ""){wordToGuessElement.textContent = word;}
+        wordToGuessElement.textContent = word;
         return;
     }
     let blank = "";
@@ -106,7 +111,8 @@ addChat("hudhuidhewiufh", "Bart")*/
 
 socket.connect();
 socket.onConnect(() => {
-    if(getRoomDetails().roomId != '0') {
+    console.log(getRoomDetails().roomId)
+    if(getRoomDetails().roomId) {
         socket.send({
             type: "init",
             joinMethod: "joinRoom",
@@ -117,7 +123,7 @@ socket.onConnect(() => {
             type: "init",
             joinMethod: "createRoom",
             name: player.name,
-            roomName: prompt("Enter a room name"),
+           // roomName: prompt("Enter a room name"),
         });
     }
     socket.batch({
@@ -128,7 +134,7 @@ socket.onConnect(() => {
 socket.onDisconnect(() => {
     console.log("Disconnected from server");
 });
-socket.onPackage((event) => {
+/*socket.onPackage((event) => {
     console.log(event);
     switch(event.type) {
         case "chat": {
@@ -143,7 +149,7 @@ socket.onPackage((event) => {
         case "init": {
             if(event.status == "success") {
                 player.id = event.id;
-                setPlayers([...event.otherPlayersData,player]);
+                setPlayers([...event?.otherPlayersData,player]);
                 break;
             }
             if(event.status == "fail") {
@@ -156,12 +162,28 @@ socket.onPackage((event) => {
 },true);
 setInterval(()=>{
     //sent actions
+    if(pen.actions.length == 0) return;
     socket.batch({
         type: "actions",
         actions: pen.actions
     });
     pen.actions = [];
-},1000)
+},1000);*/
 //socket.batch()
 //receive => Id, 
 //intial send => socket => Id, roomID, roomName, 
+
+
+function generateWord() {
+    let words = ["apple", "book", "car", "dog", "elephant", "flower", "guitar", "hat","iceberg", "jacket", "kite", "lamp", "monkey", "notebook", "ocean","pencil", "quilt", "rainbow", "sunset", "tree", "umbrella", "violin","window", "xylophone", "yacht", "zebra", "anchor", "balloon", "candle","diamond", "egg", "feather", "garden", "hammer", "island", "jellyfish","kangaroo", "lighthouse", "mirror", "needle", "orange", "pillow","queen", "rocket", "sandcastle", "telescope", "umbrella", "vase","whistle", "xylophone", "yarn", "zipper"];
+    let word = words[Math.floor(Math.random() * words.length)];
+    setWordToGuess(word);
+    alert(word);
+    pen.clear();
+    wordToGuess = word;
+}
+function win(){
+    addChat(`<span style="color:var(--done);font-size:1.4rem;">You guessed correctly!</span>`, "#-game-");
+    setWordToGuess(wordToGuess,true);
+}
+

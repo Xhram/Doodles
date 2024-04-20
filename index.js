@@ -1,7 +1,7 @@
 const fs = require('fs');
 const http = require('http');
 var url = require('url');
-const ws = require('websocket');
+var websocket = require("websocket").server;
 const port = 8080;
 
 
@@ -60,14 +60,14 @@ function Request(request,response){
 			package = {
 				rooms:[]
 			}
-			for(var i = 0; i<randInt(3,100);i++){
-				package.rooms.push({
-					name:"test server " + i,
-					playerCount:randInt(0,8),
-					round:randInt(0,3),
-					roomId:i
-				})
-			}
+			// for(var i = 0; i<randInt(3,100);i++){
+			// 	package.rooms.push({
+			// 		name:"test server " + i,
+			// 		playerCount:randInt(0,8),
+			// 		round:randInt(0,3),
+			// 		roomId:i
+			// 	})
+			// }
 			for(var i = 0; i < Rooms.length; i++){
 				var room = Rooms[i];
 				package.rooms.push({
@@ -127,7 +127,7 @@ function randInt(min, max){
 
 var server = http.createServer(Request);
 server.listen(port);
-var webSocketServer = new ws.({httpServer:server});
+var webSocketServer = new websocket({httpServer: server});
 console.log("Server is running")
 
 var Rooms =[];
@@ -148,6 +148,7 @@ class Room {
 	autoCheckTimeout;
 	peopleHowGotTheWord = [];
 	constructor(ws,name){
+		console.log("new room")
 		this.id = Room.#idCount++;
 		this.name = name;
 		this.host = ws.client;
@@ -324,12 +325,15 @@ class Client {
 	ws;
 	name;
 	score;
-	constructor(ws,room,name){
+	constructor(ws,room,name,canAdd){
 		this.id = Client.#idCount++;
 		this.joinTime = Date.now();
 		this.room = room;
 		this.ws = ws;
-		this.room.addClient(ws);
+		if(canAdd != false){
+			this.room.addClient(ws);
+		}
+
 		this.name = name;
 		this.score = 0;
 		Clients.push(this)
@@ -341,19 +345,24 @@ class Client {
 
 
 function webSocketConnect(req){
-	var webSocket = req.accept()
+	let webSocket = req.accept()
 	console.log("dfsdfsdf")
-	webSocket.hasInit = false;
+	webSocket.hasInit = false; 
+	let client;
 	webSocket.on('message', (data) => {
 		var package;
 		try {
-			package = JSON.parse(data);
+			package = JSON.parse(data.utf8Data);
 		} catch(error){
+			console.log(error)
 			return;
 		}
+		console.log(package)
+		console.log(client)
+
+		
 		if(webSocket.hasInit){
-			//add later
-			var client = webSocket.client;
+			
 			if(package.type == "broadcast"){
 				client.room.sendPackageToAllInRoomBut({
 					type:"broadcast",
@@ -368,7 +377,9 @@ function webSocketConnect(req){
 				client.room.start(webSocket)
 			}
 		} else {
+			console.log("packs sned")
 			if(package.type == "init"){
+				console.log("fddf")
 				webSocket.hasInit = true;
 				if(package.joinMethod == "joinRoom"){
 					var targetRoom;
@@ -389,7 +400,7 @@ function webSocketConnect(req){
 						return;
 					}
 					
-					var client = new Client(webSocket,targetRoom,package.name);
+					client = new Client(webSocket,targetRoom,package.name);
 					webSocket.client = client;
 
 					var playersData = []
@@ -411,8 +422,9 @@ function webSocketConnect(req){
 						id:client.id,
 					}))
 					
-				} else if(webSocket.joinMethod == "createRoom") {
-					var client = new Client(webSocket,targetRoom,package.name);
+				} else if(package.joinMethod == "createRoom") {
+					console.log("fdsdf")
+					client = new Client(webSocket,targetRoom,package.name,false);
 					webSocket.client = client;
 					var targetRoom = new Room(webSocket,package.roomName);
 					webSocket.send(JSON.stringify({
@@ -420,6 +432,7 @@ function webSocketConnect(req){
 						status:"success",
 						id:client.id,
 						roomId:targetRoom.id,
+						otherPlayersData:[],
 					}))
 				}
 				
@@ -430,7 +443,7 @@ function webSocketConnect(req){
 
 	webSocket.on("close", () => {
 		if(webSocket.hasInit){
-			webSocket.client.room.removeClient(webSocket.client);
+			client.room.removeClient(webSocket.client);
 		}
 	})
 }
