@@ -70,6 +70,7 @@ function Request(request,response){
 			response.properEnd()
 			
 		} else {
+			console.log(request.url)
 			var path = "./client"+urlData.pathname;
 			if(path.endsWith("/")){
 				path+="index.html"
