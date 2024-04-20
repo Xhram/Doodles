@@ -1,7 +1,7 @@
 const fs = require('fs');
 const http = require('http');
 var url = require('url');
-const websocket = require('websocket');
+const ws = require('ws');
 const port = 8080;
 
 function writeHeaders(response){
@@ -52,8 +52,23 @@ function Request(request,response){
 		response.properEnd();
 	} else if(request.method === 'GET'){
 		var urlData = url.parse(request.url, true);
-		if(urlData.pathname == "/api/serverlist"){
-			response.setHeader("Content-Type",contentType)
+		if(urlData.pathname == "/api/roomslist"){
+			response.setHeader("Content-Type","application/javascript; charset=utf-8")
+			package = {
+				rooms:[]
+			}
+			for(var i = 0; i < Rooms.length; i++){
+				var room = Rooms[i];
+				package.rooms.push({
+					name:room.name,
+					peopleCount:room.clients.length,
+					round:room.round,
+					roomId:room.id
+				})
+			}
+			response.write(JSON.stringify(package));
+			response.properEnd()
+			
 		} else {
 			var path = "./client"+urlData.pathname;
 			if(path.endsWith("/")){
@@ -63,7 +78,7 @@ function Request(request,response){
 			
 			var contentType = getContentTypeByPath(path)
 			if(contentType != "null"){
-				response.setHeader("Content-Type","application/javascript; charset=utf-8")
+				response.setHeader("Content-Type","contentType")
 			}
 	
 	
@@ -98,9 +113,7 @@ function Request(request,response){
 var server = http.createServer(Request);
 server.listen(port);
 console.log("Server is running")
-const wsServer = new websocket.server({
-	httpServer: server,
-});
+webSocketServer = ws.WebSocketServer({server})
 var Rooms =[];
 var Clients = [];
 
@@ -112,12 +125,15 @@ class Room {
 	name;
 	host;
 	clients;
+	drawing;
+	round;
 	constructor(ws,name){
 		this.id = Room.#idCount++;
 		this.name = name;
 		this.host = ws;
 		this.clients = [ws];
-
+		this.drawing = [];
+		this.round = 0;
 	}
 	addClient(ws){
 		clients.push(ws);
@@ -137,3 +153,48 @@ class Client {
 		this.room.addClient(ws);
 	}
 }
+
+
+function webSocketConnect(webSocket){
+	webSocket.hasInit = false;
+	webSocket.on('message', (data) => {
+		var package;
+		try {
+			package = JSON.parse(data);
+		} catch(error){
+			return;
+		}
+		if(webSocket.hasInit){
+			
+		} else {
+			if(webSocket.type == "init"){
+				if(webSocket.joinMethod)
+				var targetRoom;
+				for(var i = 0;i<Rooms.length;i++){
+					var room = Rooms[i];
+					if(room.id == package.roomId){
+						targetRoom = room;
+					}
+				}
+				if(targetRoom == undefined){
+					webSocket.send(JSON.stringify({
+						type:"init",
+						status:"fail",
+						reason:"room not found"
+					}))
+				}
+				
+				var client = new Client(webSocket,);
+				webSocket.send(JSON.stringify({
+					type:"init",
+
+				}))
+				webSocket.hasInit = true;
+			}
+		}
+	})
+}
+
+
+
+webSocketServer.on("connection",webSocketConnect)
