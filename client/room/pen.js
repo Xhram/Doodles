@@ -45,16 +45,13 @@ class Pen {
                 break;
             }
             case "erase": {
-                this.ctx.save();
-                this.fillStyle = this.canvas.style.background || "#ffffff";
-                this.executeDraw();
-                this.ctx.restore();
+                this.executeDraw(this.canvas.style.background || "#ffffff");
                 break;
             }
         }
     }
-    executeDraw() {
-        this.ctx.fillStyle = this.color;
+    executeDraw(color = this.color) {
+        this.ctx.fillStyle = color;
         this.ctx.beginPath();
         this.ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI, true);
         this.ctx.closePath();
@@ -65,7 +62,7 @@ class Pen {
             this.ctx.lineTo(this.lastPosition.x, this.lastPosition.y);
             this.ctx.lineWidth = this.radius * 2;
             this.ctx.lineCap = "round"; //for rounded courners
-            this.ctx.strokeStyle = this.color;
+            this.ctx.strokeStyle = color;
             this.ctx.stroke();
         }
         this.lastPosition = {x:this.position.x,y:this.position.y};
@@ -74,7 +71,11 @@ class Pen {
         this.color = color;
     }
     setMode(mode) {
+        console.log(mode);
         this.mode = mode;
+    }
+    setSize(size) {
+        this.radius = size;
     }
     clear() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

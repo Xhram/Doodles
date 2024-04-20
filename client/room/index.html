@@ -9,43 +9,52 @@
     </head>
     <body>
         <div class="container">
-            <div class="header">header</div>
+            <div class="header">
+                <div></div>
+                <h3>Word To Guess</h3>
+            </div>
             <div class="players">players</div>
             <div class="canvas-fill">
                 <canvas id="drawArea" width="800" height="450"></canvas>
                 <div class="tools">
                     <colors>
-                        <div style="background-color: #000000;" onmousedown="ColorChange('#000000')"></div>
-                        <div style="background-color: #4c4c4c;" onmousedown="ColorChange('#4c4c4c')"></div>
-                        <div style="background-color: #c1c1c1;" onmousedown="ColorChange('#c1c1c1')"></div>
-                        <div style="background-color: #ffffff;" onmousedown="ColorChange('#ffffff')"></div>
-                        <div style="background-color: #740b07;" onmousedown="ColorChange('#740b07')"></div>
-                        <div style="background-color: #ef130b;" onmousedown="ColorChange('#ef130b')"></div>
-                        <div style="background-color: #c23800;" onmousedown="ColorChange('#c23800')"></div>
-                        <div style="background-color: #ff7100;" onmousedown="ColorChange('#ff7100')"></div>
-                        <div style="background-color: #ffe400;" onmousedown="ColorChange('#ffe400')"></div>
-                        <div style="background-color: #e8a200;" onmousedown="ColorChange('#e8a200')"></div>
-                        <div style="background-color: #005510;" onmousedown="ColorChange('#005510')"></div>
-                        <div style="background-color: #00cc00;" onmousedown="ColorChange('#00cc00')"></div>
-                        <div style="background-color: #0e0865;" onmousedown="ColorChange('#0e0865')"></div>
-                        <div style="background-color: #231fd3;" onmousedown="ColorChange('#231fd3')"></div>
-                        <div style="background-color: #00569e;" onmousedown="ColorChange('#00569e')"></div>
-                        <div style="background-color: #00b2ff;" onmousedown="ColorChange('#00b2ff')"></div>
-                        <div style="background-color: #550069;" onmousedown="ColorChange('#550069')"></div>
-                        <div style="background-color: #a300ba;" onmousedown="ColorChange('#a300ba')"></div>
-                        <div style="background-color: #a75574;" onmousedown="ColorChange('#a75574')"></div>
-                        <div style="background-color: #d37caa;" onmousedown="ColorChange('#d37caa')"></div>
-                        <div style="background-color: #63300d;" onmousedown="ColorChange('#63300d')"></div>
-                        <div style="background-color: #a0522d;" onmousedown="ColorChange('#a0522d')"></div>
+                        <div style="background-color: #000000;" onmousedown="pen.setColor('#000000')"></div>
+                        <div style="background-color: #4c4c4c;" onmousedown="pen.setColor('#4c4c4c')"></div>
+                        <div style="background-color: #c1c1c1;" onmousedown="pen.setColor('#c1c1c1')"></div>
+                        <div style="background-color: #ffffff;" onmousedown="pen.setColor('#ffffff')"></div>
+                        <div style="background-color: #740b07;" onmousedown="pen.setColor('#740b07')"></div>
+                        <div style="background-color: #ef130b;" onmousedown="pen.setColor('#ef130b')"></div>
+                        <div style="background-color: #c23800;" onmousedown="pen.setColor('#c23800')"></div>
+                        <div style="background-color: #ff7100;" onmousedown="pen.setColor('#ff7100')"></div>
+                        <div style="background-color: #ffe400;" onmousedown="pen.setColor('#ffe400')"></div>
+                        <div style="background-color: #e8a200;" onmousedown="pen.setColor('#e8a200')"></div>
+                        <div style="background-color: #005510;" onmousedown="pen.setColor('#005510')"></div>
+                        <div style="background-color: transparent;cursor:default;"></div><!--blank-->
+                        <div style="background-color: transparent;cursor:default;"></div><!--blank-->
+                        <div style="background-color: var(--primary);"><div style="background:#fff;border-radius:50%; scale: 0.9;" onmousedown="pen.setSize(10)"></div></div>
+                        <div style="background-color: var(--primary);"><div style="background:#fff;border-radius:50%; scale: 0.6;" onmousedown="pen.setSize(5)"></div></div>
+                        <div style="background-color: var(--primary);"><div style="background:#fff;border-radius:50%; scale: 0.3;" onmousedown="pen.setSize(2)"></div></div>
+
+                        
+                        <div style="background-color: #00cc00;" onmousedown="pen.setColor('#00cc00')"></div>
+                        <div style="background-color: #0e0865;" onmousedown="pen.setColor('#0e0865')"></div>
+                        <div style="background-color: #231fd3;" onmousedown="pen.setColor('#231fd3')"></div>
+                        <div style="background-color: #00569e;" onmousedown="pen.setColor('#00569e')"></div>
+                        <div style="background-color: #00b2ff;" onmousedown="pen.setColor('#00b2ff')"></div>
+                        <div style="background-color: #550069;" onmousedown="pen.setColor('#550069')"></div>
+                        <div style="background-color: #a300ba;" onmousedown="pen.setColor('#a300ba')"></div>
+                        <div style="background-color: #a75574;" onmousedown="pen.setColor('#a75574')"></div>
+                        <div style="background-color: #d37caa;" onmousedown="pen.setColor('#d37caa')"></div>
+                        <div style="background-color: #63300d;" onmousedown="pen.setColor('#63300d')"></div>
+                        <div style="background-color: #a0522d;" onmousedown="pen.setColor('#a0522d')"></div>
+                        <div style="background-color: transparent;cursor:default;"></div><!--blank-->
+                        <div style="background-color: transparent;cursor:default;"></div><!--blank-->
+                        <div style="background-color: var(--primary);" onmousedown="pen.setMode('pen')"><img src="../assets/pencil.svg"></div>
+                        <div style="background-color: var(--primary);" onmousedown="pen.setMode('fill')"><img src="../assets/fill.svg"></div>
+                        <div style="background-color: var(--primary);" onmousedown="pen.setMode('erase')"><img src="../assets/rubber.svg"></div>
+
                     </colors>
-                    <tools>
-                        <div><span style="width:90%"></span></div>
-                        <div><span style="width:65%"></span</div>
-                        <div><span style="width:40%"></span</div>
-                        <div>Pen</div>
-                        <div>Buck</div>
-                        <div>erase</div>
-                    </tools>
+                    
                 </div>
             </div>
             <div class="chat">chat</div>
