@@ -73,49 +73,7 @@ class Pen {
     clear() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
-    floodFill(x, y) {
-        let imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-        let pixelStack = [{ x, y }];
-        const targetColor = this.ctx.getImageData(x, y, 1, 1).data;
-
-        let i = 0;
-        while(pixelStack.length > 0) {
-            i++;
-            let pixel = pixelStack.pop();
-            let pixelIndex = (pixel.y * this.canvas.width + pixel.x) * 4;
-            let r = imageData.data[pixelIndex];
-            let g = imageData.data[pixelIndex + 1];
-            let b = imageData.data[pixelIndex + 2];
-            if(
-                pixel.x >= 0 && pixel.y >= 0 &&
-                pixel.x < this.canvas.width && pixel.y < this.canvas.height &&
-                isSameColor(r, g, b, targetColor[0], targetColor[1], targetColor[2])
-            ) {
-                console.log(pixel)
-                //this.setPixel(imageData.data, pixel.x, pixel.y, this.color);
-                this.ctx.fillStyle = this.color;
-                this.ctx.fillRect(pixel.x, pixel.y, 1, 1);
-                console.log(distance(x,y,pixel.x,pixel.y) < distance(x,y,pixel.x - 1, pixel.y))
-                if(distance(x,y,pixel.x,pixel.y) < distance(x,y,pixel.x - 1, pixel.y)) pixelStack.push({ x: pixel.x - 1, y: pixel.y });
-                if(distance(x,y,pixel.x,pixel.y) < distance(x,y,pixel.x + 1, pixel.y)) pixelStack.push({ x: pixel.x + 1, y: pixel.y });
-                if(distance(x,y,pixel.x,pixel.y) < distance(x,y,pixel.x, pixel.y - 1)) pixelStack.push({ x: pixel.x, y: pixel.y - 1 });
-                if(distance(x,y,pixel.x,pixel.y) < distance(x,y,pixel.x, pixel.y + 1)) pixelStack.push({ x: pixel.x, y: pixel.y + 1 });
-            }
-        }
+    floodFill(x, y, fillColor) {
+    
     }
-    setPixel(data, x, y, color) {
-        let pixelIndex = (y * this.canvas.width + x) * 4;
-        data[pixelIndex] = parseInt(color.substring(1, 3), 16);
-        data[pixelIndex + 1] = parseInt(color.substring(3, 5), 16);
-        data[pixelIndex + 2] = parseInt(color.substring(5, 7), 16);
-    }
-}
-function distance(x1,y1,x2,y2) {
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-}
-function isSameColor(r1, g1, b1, r2, g2, b2) {
-    /*let r2 = parseInt(color.substring(1, 3), 16);
-    let g2 = parseInt(color.substring(3, 5), 16);
-    let b2 = parseInt(color.substring(5, 7), 16);*/
-    return r1 === r2 && g1 === g2 && b1 === b2;
 }

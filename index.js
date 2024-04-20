@@ -113,7 +113,7 @@ function Request(request,response){
 var server = http.createServer(Request);
 server.listen(port);
 console.log("Server is running")
-webSocketServer = ws.WebSocketServer({server})
+webSocketServer = new ws.WebSocket.WebSocketServer({server})
 var Rooms =[];
 var Clients = [];
 
@@ -134,6 +134,7 @@ class Room {
 		this.clients = [ws];
 		this.drawing = [];
 		this.round = 0;
+		Rooms.push(this)
 	}
 	addClient(ws){
 		clients.push(ws);
@@ -145,12 +146,17 @@ class Client {
 	joinTime;
 	room;
 	ws;
-	constructor(ws,room){
+	name;
+	score;
+	constructor(ws,room,name){
 		this.id = Client.#idCount++;
 		this.joinTime = Date.now();
 		this.room = room;
 		this.ws = ws;
 		this.room.addClient(ws);
+		this.name = name;
+		this.score = 0;
+		Clients.push(this)
 	}
 }
 
@@ -168,27 +174,55 @@ function webSocketConnect(webSocket){
 			
 		} else {
 			if(webSocket.type == "init"){
-				if(webSocket.joinMethod)
-				var targetRoom;
-				for(var i = 0;i<Rooms.length;i++){
-					var room = Rooms[i];
-					if(room.id == package.roomId){
-						targetRoom = room;
+				if(webSocket.joinMethod == "joinRoom"){
+					var targetRoom;
+					for(var i = 0;i<Rooms.length;i++){
+						var room = Rooms[i];
+						if(room.id == package.roomId){
+							targetRoom = room;
+						}
 					}
-				}
-				if(targetRoom == undefined){
+					if(targetRoom == undefined){
+						webSocket.send(JSON.stringify({
+							type:"init",
+							status:"fail",
+							reason:"room not found"
+						}))
+					}
+					
+					var client = new Client(webSocket,targetRoom,package.name);
+					webSocket.client = client;
+
+					var playersData = []
+					for(var i = 0;i<targetRoom.clients.length;i++){
+						if(targetRoom.clients[i].id != client.id){
+							playersData.push({
+								name:targetRoom.clients[i].name,
+								id:targetRoom.clients[i].id,
+								score:targetRoom.clients[i].score
+							})
+							
+						}
+					}
+					
 					webSocket.send(JSON.stringify({
 						type:"init",
-						status:"fail",
-						reason:"room not found"
+						status:"success",
+						otherPlayersData:playersData,
+						id:client.id,
+					}))
+					
+				} else if(webSocket.joinMethod == "createRoom") {
+					var targetRoom = new Room(webSocket,package.roomName);
+					var client = new Client(webSocket,targetRoom,package.name);
+					webSocket.client = client;
+					webSocket.send(JSON.stringify({
+						type:"init",
+						status:"success",
+						id:client.id,
+						roomId:targetRoom.id,
 					}))
 				}
-				
-				var client = new Client(webSocket,);
-				webSocket.send(JSON.stringify({
-					type:"init",
-
-				}))
 				webSocket.hasInit = true;
 			}
 		}
