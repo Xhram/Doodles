@@ -1,2 +1,2 @@
 # Doodles
-I remake of doodle
+A remake of doodle
