@@ -3,6 +3,7 @@ class InputManager {
     listening = false;
     constructor(config = {}){
         this.userType = config?.userType || (/iPhone|iPad|iPod|Android|BlackBerry|Windows Phone/i.test(navigator.userAgent) ? "touchScreen" : (navigator.maxTouchPoints > 0 ? "touchScreen" : "keyboard"));
+        //touchScreen, keyboard
         this.mouse = {
             down: false,
             onMouseDown: config?.onMouseDown || function(){},
@@ -14,8 +15,8 @@ class InputManager {
     listen(bindedElement = document.body){
         this.listening = true;
         if(this.userType === "keyboard"){
-            document.addEventListener("keydown", this.keyDown.bind(this));
-            document.addEventListener("keyup", this.keyUp.bind(this));
+            /*document.addEventListener("keydown", this.keyDown.bind(this));
+            document.addEventListener("keyup", this.keyUp.bind(this));*/
             bindedElement.addEventListener("mousedown", this.mouse.onMouseDown);
             bindedElement.addEventListener("mousemove", this.mouse.onMouseMove);
             bindedElement.addEventListener("mouseup", this.mouse.onMouseUp);
