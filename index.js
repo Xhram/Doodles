@@ -1,6 +1,7 @@
 const fs = require('fs');
 const http = require('http');
 var url = require('url');
+const websocket = require('websocket');
 const port = 8080;
 
 function writeHeaders(response){
@@ -10,6 +11,27 @@ function writeHeaders(response){
 	response.setHeader('Access-Control-Allow-Headers', '*');
 }
 
+function getContentTypeByPath(path){
+	if(path.endsWith(".html")){
+		return 'text/html; charset=utf-8'
+	}
+	if(path.endsWith(".css")){
+		return 'text/css; charset=utf-8'
+	}
+	if(path.endsWith(".js")){
+		return 'application/javascript; charset=utf-8'
+	}
+	if(path.endsWith(".svg")){
+		return 'image/svg+xml'
+	}
+	if(path.endsWith(".woff2")){
+		return 'font/woff2'
+	}
+	if(path.endsWith(".png")){
+		return 'image/png'
+	}
+	return "null"
+}
 
 
 function Request(request,response){
@@ -72,25 +94,37 @@ function Request(request,response){
 var server = http.createServer(Request);
 server.listen(port);
 console.log("Server is running")
+const wsServer = new websocket.server({
+	httpServer: server,
+});
+class Room {
+	static #idCount = 0;
+	id;
+	name;
+	host;
+	clients;
+	constructor(ws,name){
+		this.id = Room.#idCount++;
+		this.name = name;
+		this.host = ws;
+		this.clients = [ws];
 
-function getContentTypeByPath(path){
-	if(path.endsWith(".html")){
-		return 'text/html; charset=utf-8'
 	}
-	if(path.endsWith(".css")){
-		return 'text/css; charset=utf-8'
+	addClient(ws){
+		clients.push(ws);
 	}
-	if(path.endsWith(".js")){
-		return 'application/javascript; charset=utf-8'
+}
+class Client {
+	static #idCount = 0;
+	id;
+	joinTime;
+	room;
+	ws;
+	constructor(ws,room){
+		this.id = Client.#idCount++;
+		this.joinTime = Date.now();
+		this.room = room;
+		this.ws = ws;
+		this.room.addClient(ws);
 	}
-	if(path.endsWith(".svg")){
-		return 'image/svg+xml'
-	}
-	if(path.endsWith(".woff2")){
-		return 'font/woff2'
-	}
-	if(path.endsWith(".png")){
-		return 'image/png'
-	}
-	return "null"
 }

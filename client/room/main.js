@@ -17,3 +17,16 @@ const input = new InputManager({
 });
 
 input.listen(drawArea);
+socket.connect();
+socket.onConnect(() => {
+    console.log("Connected to server");
+});
+socket.onDisconnect(() => {
+    console.log("Disconnected from server");
+});
+socket.onPackage((event) => {
+    console.log(event);
+},true);
+//socket.batch()
+//receive => Id, 
+//intial send => socket => Id, roomID, roomName, 

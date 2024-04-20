@@ -4,4 +4,5 @@ body {
 
 #drawArea {
     background: #fff;
+    aspect-ratio: 1;
 }

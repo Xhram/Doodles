@@ -18,6 +18,7 @@ class Pen {
     }
     lift() {
         this.down = false;
+        this.lastPosition = null;
     }
     draw(event){
         if(!this.down) return;
@@ -36,9 +37,21 @@ class Pen {
         };
         switch(this.mode) {
             case "pen": {
+                this.fillStyle = this.color;
                 this.ctx.beginPath();
-                this.ctx.arc(this.position.x, this.position.y, 0, 2 * Math.PI, true);
+                this.ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI, true);
+                this.ctx.closePath();
                 this.ctx.fill();
+                if(this.lastPosition) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.position.x, this.position.y)
+                    this.ctx.lineTo(this.lastPosition.x, this.lastPosition.y);
+                    this.ctx.lineWidth = this.radius * 2;
+                    this.lineCap = "round"; //for rounded courners
+                    this.strokeStyle = this.color;
+                    this.ctx.stroke();
+                }
+                this.lastPosition = {x:this.position.x,y:this.position.y};
                 break;
             }
             case "fill": {
