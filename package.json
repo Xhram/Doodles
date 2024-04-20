@@ -1,15 +1,19 @@
 {
-  "name": "nodejs",
+  "name": "doodles",
   "version": "1.0.0",
-  "description": "",
+  "description": "A remake of doodle",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Isaac Ruiz Kahle,Norbert Zych",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^18.0.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Doodles"
   }
 }

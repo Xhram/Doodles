@@ -1,4 +1,1 @@
-const socket = new SocketManager({
-  batchIntervalTime: 16,
-  syncTimeOffset: 0,
-})
+const socket = new SocketManager();
