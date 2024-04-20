@@ -4,7 +4,8 @@ body {
     --players-sec-color: #fafafa;
     --input-field: var(--primary);
     --chat-color: var(--primary);
-    background: var(--background);
+    background-color: var(--background);
+    background-image: url("../assets/Scribbles.background.png");
 }
 
 #drawArea {

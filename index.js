@@ -60,14 +60,14 @@ function Request(request,response){
 			package = {
 				rooms:[]
 			}
-			// for(var i = 0; i<randInt(3,15);i++){
-			// 	package.rooms.push({
-			// 		name:"test server " + i,
-			// 		playerCount:randInt(0,8),
-			// 		round:randInt(0,3),
-			// 		roomId:i+4
-			// 	})
-			// }
+			for(var i = 0; i<randInt(3,15);i++){
+				package.rooms.push({
+					name:"test server " + i,
+					playerCount:randInt(0,8),
+					round:randInt(0,3),
+					roomId:i+4
+				})
+			}
 			for(var i = 0; i < Rooms.length; i++){
 				var room = Rooms[i];
 				package.rooms.push({
@@ -142,6 +142,10 @@ class Room {
 	clients;
 	drawing;
 	round;
+	word;
+	clock;
+	autoCheckTimeout;
+	peopleHowGotTheWord = [];
 	constructor(ws,name){
 		this.id = Room.#idCount++;
 		this.name = name;
@@ -149,7 +153,86 @@ class Room {
 		this.clients = [ws.client];
 		this.drawing;
 		this.round = 0;
+		this.word = "ackjsdhcbhdsfv";
 		Rooms.push(this)
+	}
+	start(ws){
+		var client = ws.client;
+		if(client.id == host.id){
+			this.round++;
+			this.word = words[randInt(0,words.length-1)]
+			this.drawing = this.clients[0]
+			this.drawing.send({
+				type:"start",
+				drawing:this.drawing.id,
+				word:this.word
+			})
+			this.sendPackageToAllInRoomBut({
+				type:"start",
+				drawing:this.drawing.id
+			},this.drawing)
+			this.clock = Data.now() + 90 * 1000
+			this.autoCheckTimeout = setTimeout(this.tryNextTurn,90*1000)
+		}
+		
+	}
+	chatMsg(ws,msg){
+		var client = ws.client;
+		if(msg.includes(word)){
+
+			
+			if(this.peopleHowGotTheWord.indexOf(client.id) == -1){
+				client.score += 500;
+				peopleHowGotTheWord.push(client.id)
+				var eveyOneHasGotIt = true;
+				for(var i = 0;i<this.clients.length;i++){
+					if(peopleHowGotTheWord.indexOf(this.clients[i].id) == -1){
+						eveyOneHasGotIt = false;
+						break;
+					}
+				}
+				if(eveyOneHasGotIt){
+					clearTimeout(this.autoCheckTimeout)
+					tryNextTurn()
+				}
+			}
+			this.sendPackageToAllInRoom({
+				type:"chat",
+				wasCorrect:true,
+				author:client.id,
+				score:client.score,
+			})
+		} else {
+			this.sendPackageToAllInRoom({
+				type:"chat",
+				wasCorrect:false,
+				author:client.id,
+				message:msg
+			})
+		}
+	}
+	tryNextTurn(){
+		this.word = words[randInt(0,words.length-1)]
+		var newIndex = this.clients.indexof(this.drawing) + 1;
+		if(newIndex >= this.clients.length){
+			nextRound()
+			return;
+		}
+		this.drawing = this.clients[newIndex]
+		this.drawing.send({
+			type:"start",
+			drawing:this.drawing.id,
+			word:this.word
+		})
+		this.sendPackageToAllInRoomBut({
+			type:"start",
+			drawing:this.drawing.id
+		},this.drawing)
+		this.clock = Data.now() + 90 * 1000
+		this.autoCheckTimeout = setTimeout(this.tryNextTurn,90*1000)
+	}
+	nextRound(){
+		
 	}
 	addClient(ws){
 		sendPackageToAllInRoom({
@@ -258,6 +341,12 @@ function webSocketConnect(webSocket){
 					author:client.id,
 					message:package.message
 				},client)
+			}
+			if(package.type == "chat"){
+				client.room.chatMsg(webSocket,package.message)
+			}
+			if(package.type == "start"){
+				client.room.start(webSocket)
 			}
 		} else {
 			if(package.type == "init"){

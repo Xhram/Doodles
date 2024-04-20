@@ -1,3 +1,9 @@
+let player = {
+    name: input("Enter your name"),
+    score: 0,
+    id: null,
+}
+
 const drawArea = document.getElementById("drawArea");
 document.oncontextmenu = drawArea.oncontextmenu = function() {return false;}
 //const ctx = drawArea.getContext("2d");
@@ -58,27 +64,33 @@ function chat(element) {
     element.value = "";
 
     //send socket data
-    socket.batch({
+    socket.send({
         type: "chat",
-        data: element.value
+        message: element.value,
     });
 }
 function addChat(message = "", username = "#-no name-") {
     const chatsContainer = document.getElementById("chat");
     const msgElement = document.createElement('msg');
-    
-    const userElement = document.createElement('user');
-    userElement.textContent = `${username}: `;
-    msgElement.appendChild(userElement);
+
+    if(username != "#-game-"){
+        const userElement = document.createElement('user');
+        userElement.textContent = `${username}: `;
+        msgElement.appendChild(userElement);
+    }
     
     const messageText = document.createTextNode(message);
     msgElement.appendChild(messageText);
     
     chatsContainer.appendChild(msgElement);
 }
-function setWordToGuess(word = "") {
-    const wordToGuessElement = document.getElementById("wordToGuess")
-    let blank
+function setWordToGuess(word = "",show = false) {
+    const wordToGuessElement = document.getElementById("wordToGuess");
+    if(show) {
+        if(word != ""){wordToGuessElement.textContent = word;}
+        return;
+    }
+    let blank = "";
     for(let i = 0;i < word.length;i++){
         if(word[i] == " " || word[i] == "-") {
             blank += word[i];
@@ -86,6 +98,7 @@ function setWordToGuess(word = "") {
             blank += "_";
         }
     }
+    wordToGuessElement.textContent = blank;
 }
 /*addChat("hello");
 addChat("hudhuidhewiufh", "Bart")*/
@@ -102,13 +115,38 @@ socket.onDisconnect(() => {
 });
 socket.onPackage((event) => {
     console.log(event);
+    switch(event.type) {
+        case "chat": {
+            if(event.wasCorrect) {
+                let author = event.author == myName ? "You" : event.author;
+                addChat(`${author} guessed correctly!`, "#-game-");
+                break;
+            }
+            addChat(event.message, event.author);
+            break;
+        }
+        case "init": {
+            if(event.status == "success") {
+                player.id = event.id;
+                setPlayers([...event.otherPlayersData,player]);
+                break;
+            }
+            if(event.status == "fail") {
+                alert(event.reason);
+                window.location.href = window.location.origin + "/";
+                break;
+            }
+        }
+    }
 },true);
 setInterval(()=>{
+    //sent actions
     socket.batch({
         type: "actions",
         actions: pen.actions
     });
-})
+    pen.actions = [];
+},1000)
 //socket.batch()
 //receive => Id, 
 //intial send => socket => Id, roomID, roomName, 
