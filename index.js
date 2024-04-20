@@ -78,7 +78,7 @@ function Request(request,response){
 			
 			var contentType = getContentTypeByPath(path)
 			if(contentType != "null"){
-				response.setHeader("Content-Type","contentType")
+				response.setHeader("Content-Type",contentType)
 			}
 	
 	
@@ -130,15 +130,52 @@ class Room {
 	constructor(ws,name){
 		this.id = Room.#idCount++;
 		this.name = name;
-		this.host = ws;
-		this.clients = [ws];
-		this.drawing = [];
+		this.host = ws.client;
+		this.clients = [ws.client];
+		this.drawing;
 		this.round = 0;
 		Rooms.push(this)
 	}
 	addClient(ws){
 		clients.push(ws);
 	}
+	removeClient(ws){
+		var client = ws.client;
+		var events = [];
+		var indexOfClient = 0;
+		for(var i = 0;i<this.clients.length;i++){
+			if(this.clients[i].id == client.id){
+				this.clients.splice(i,1);
+				indexOfClient = i;
+			}
+		}
+		
+		
+		if(client.id == this.host.id){
+			var oldest = this.clients[0]
+			for(var i = 1;i<this.clients.length;i++){
+				if(this.clients[i].joinTime < oldest.joinTime){
+					oldest = this.clients[i]
+					break;
+				}
+			}
+			events.push({
+				type:"new host",
+				host:oldest.id
+			})
+			
+		}
+
+		if(client.id == this.drawing.id){
+			
+		}
+	}
+	sendPackageToAllInRoom(data){
+		for(var i = 0;i<this.clients.length;i++){
+			this.clients[i].send(JSON.stringify(data))
+		}
+	}
+	
 }
 class Client {
 	static #idCount = 0;
@@ -171,10 +208,11 @@ function webSocketConnect(webSocket){
 			return;
 		}
 		if(webSocket.hasInit){
-			
+			//add later
 		} else {
-			if(webSocket.type == "init"){
-				if(webSocket.joinMethod == "joinRoom"){
+			if(package.type == "init"){
+				webSocket.hasInit = true;
+				if(package.joinMethod == "joinRoom"){
 					var targetRoom;
 					for(var i = 0;i<Rooms.length;i++){
 						var room = Rooms[i];
@@ -188,6 +226,9 @@ function webSocketConnect(webSocket){
 							status:"fail",
 							reason:"room not found"
 						}))
+
+						webSocket.hasInit = false;
+						return;
 					}
 					
 					var client = new Client(webSocket,targetRoom,package.name);
@@ -213,9 +254,9 @@ function webSocketConnect(webSocket){
 					}))
 					
 				} else if(webSocket.joinMethod == "createRoom") {
-					var targetRoom = new Room(webSocket,package.roomName);
 					var client = new Client(webSocket,targetRoom,package.name);
 					webSocket.client = client;
+					var targetRoom = new Room(webSocket,package.roomName);
 					webSocket.send(JSON.stringify({
 						type:"init",
 						status:"success",
@@ -223,8 +264,15 @@ function webSocketConnect(webSocket){
 						roomId:targetRoom.id,
 					}))
 				}
-				webSocket.hasInit = true;
+				
 			}
+		}
+	})
+
+
+	webSocket.on("close", () => {
+		if(webSocket.hasInit){
+			webSocket.client.room.removeClient(webSocket.client);
 		}
 	})
 }
