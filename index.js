@@ -52,34 +52,38 @@ function Request(request,response){
 		response.properEnd();
 	} else if(request.method === 'GET'){
 		var urlData = url.parse(request.url, true);
-
-		
-		var path = "./client"+urlData.pathname;
-		if(path.endsWith("/")){
-			path+="index.html"
-		}
-
-		
-		var contentType = getContentTypeByPath(path)
-		if(contentType != "null"){
+		if(urlData.pathname == "/api/serverlist"){
 			response.setHeader("Content-Type",contentType)
-		}
-
-
-		
-		try {
-			var data;
-			if(contentType.endsWith("charset=utf-8")){
-				data = fs.readFileSync(path, "utf-8");
-			} else {
-				data = fs.readFileSync(path);
+		} else {
+			var path = "./client"+urlData.pathname;
+			if(path.endsWith("/")){
+				path+="index.html"
 			}
-			response.write(data)
-			response.properEnd();
-		} catch (error) {
-			response.write(fs.readFileSync("./404/index.html","utf8"));
-			response.properEnd();
+	
+			
+			var contentType = getContentTypeByPath(path)
+			if(contentType != "null"){
+				response.setHeader("Content-Type","application/javascript; charset=utf-8")
+			}
+	
+	
+			
+			try {
+				var data;
+				if(contentType.endsWith("charset=utf-8")){
+					data = fs.readFileSync(path, "utf-8");
+				} else {
+					data = fs.readFileSync(path);
+				}
+				response.write(data)
+				response.properEnd();
+			} catch (error) {
+				response.write(fs.readFileSync("./404/index.html","utf8"));
+				response.properEnd();
+			}
+			
 		}
+		
 
 		
 	} else {
@@ -97,6 +101,11 @@ console.log("Server is running")
 const wsServer = new websocket.server({
 	httpServer: server,
 });
+var Rooms =[];
+var Clients = [];
+
+
+
 class Room {
 	static #idCount = 0;
 	id;

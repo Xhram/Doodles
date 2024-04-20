@@ -37,7 +37,7 @@ class Pen {
         };
         switch(this.mode) {
             case "pen": {
-                this.fillStyle = this.color;
+                this.ctx.fillStyle = this.color;
                 this.ctx.beginPath();
                 this.ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI, true);
                 this.ctx.closePath();
@@ -47,8 +47,8 @@ class Pen {
                     this.ctx.moveTo(this.position.x, this.position.y)
                     this.ctx.lineTo(this.lastPosition.x, this.lastPosition.y);
                     this.ctx.lineWidth = this.radius * 2;
-                    this.lineCap = "round"; //for rounded courners
-                    this.strokeStyle = this.color;
+                    this.ctx.lineCap = "round"; //for rounded courners
+                    this.ctx.strokeStyle = this.color;
                     this.ctx.stroke();
                 }
                 this.lastPosition = {x:this.position.x,y:this.position.y};
@@ -74,6 +74,35 @@ class Pen {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
     floodFill(x, y) {
-        
+        let imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        let pixelStack = [{ x, y }];
+        while(pixelStack.length > 0) {
+            let pixel = pixelStack.pop();
+            let pixelIndex = (pixel.y * this.canvas.width + pixel.x) * 4;
+            let r = imageData.data[pixelIndex];
+            let g = imageData.data[pixelIndex + 1];
+            let b = imageData.data[pixelIndex + 2];
+
+            if(
+                pixel.x >= 0 && pixel.y >= 0 &&
+                pixel.x < this.canvas.width && pixel.y < this.canvas.height &&
+                isSameColor(r, g, b, this.color)
+            ) {
+                this.setPixel(imageData.data, pixel.x, pixel.y, this.color);
+            }
+        }
     }
+    setPixel(data, x, y, color) {
+        let pixelIndex = (y * this.canvas.width + x) * 4;
+        data[pixelIndex] = parseInt(color.substring(1, 3), 16);
+        data[pixelIndex + 1] = parseInt(color.substring(3, 5), 16);
+        data[pixelIndex + 2] = parseInt(color.substring(5, 7), 16);
+    }
+}
+
+function isSameColor(r1, g1, b1, color) {
+    let r2 = parseInt(color.substring(1, 3), 16);
+    let g2 = parseInt(color.substring(3, 5), 16);
+    let b2 = parseInt(color.substring(5, 7), 16);
+    return r1 === r2 && g1 === g2 && b1 === b2;
 }

@@ -1,4 +1,5 @@
 const drawArea = document.getElementById("drawArea");
+document.oncontextmenu = drawArea.oncontextmenu = function() {return false;}
 //const ctx = drawArea.getContext("2d");
 
 const socket = new SocketManager();
@@ -14,6 +15,9 @@ const input = new InputManager({
     onMouseUp: (event) => {
         pen.lift();
     },
+    onMouseLeave: (event) => {
+        pen.lift();
+    }
 });
 
 input.listen(drawArea);
