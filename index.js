@@ -1,5 +1,6 @@
 const fs = require('fs');
 const http = require('http');
+var url = require('url');
 const port = 8080;
 
 function writeHeaders(response){
@@ -22,8 +23,32 @@ function Request(request,response){
 	writeHeaders(response);
 
 
-	response.write("hello world")
-	response.properEnd();
+	if (request.method === 'OPTIONS'){
+		response.properEnd();
+	} else if(request.method === 'POST'){
+		response.write("dont work rn")
+		response.properEnd();
+	} else if(request.method === 'GET'){
+		var query = url.parse(request.url, true).query;
+		console.log(request.url)
+		try {
+			var data = fs.readFileSync(query.file);
+			response.write(data);
+			response.properEnd();
+		} catch (error) {
+			response.write("inturnal error (most likly file not font)");
+			response.properEnd();
+		}
+
+		
+		response.write("dont work rn")
+		response.properEnd();
+	} else {
+		response.write("fall back?")
+		response.properEnd();
+	}
+
+
 	
 }
 
