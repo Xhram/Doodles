@@ -1,6 +1,6 @@
 modules = ["nodejs-20:v8-20230920-bd784b9"]
 hidden = [".config", "package-lock.json"]
-run = "npm run start"
+run = "node index.js"
 
 [gitHubImport]
 requiredFiles = [".replit", "replit.nix", "package.json", "package-lock.json"]
@@ -15,3 +15,7 @@ language = "nodejs"
 run = ["sh", "-c", "npm run start"]
 deploymentTarget = "cloudrun"
 ignorePorts = false
+
+[[ports]]
+localPort = 8080
+externalPort = 80

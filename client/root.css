@@ -2,7 +2,8 @@
     --done: #4C956C;
     --denied: #C94C4C;
     --background: #376cbd;
-    --text: 0c1421;
+    --text: #0c1421;
+    --primary: #376cbd;
 }
 *{
     margin: 0;
