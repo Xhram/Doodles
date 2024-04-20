@@ -137,7 +137,15 @@ class Room {
 		Rooms.push(this)
 	}
 	addClient(ws){
+		sendPackageToAllInRoom({
+			type:"user join",
+			id:ws.client.id,
+			name:ws.client.name,
+			score:ws.client.score
+			
+		})
 		clients.push(ws);
+		
 	}
 	removeClient(ws){
 		var client = ws.client;
@@ -167,15 +175,31 @@ class Room {
 		}
 
 		if(client.id == this.drawing.id){
-			
+			events.push({
+				type:"end turn",
+				newDrawer:this.clients[indexOfClient]
+			})
+			this.drawing = this.clients[indexOfClient]
 		}
+
+		sendPackageToAllInRoom({
+			type:"user left",
+			id:client.id,
+			events:events
+		})
 	}
 	sendPackageToAllInRoom(data){
 		for(var i = 0;i<this.clients.length;i++){
 			this.clients[i].send(JSON.stringify(data))
 		}
 	}
-	
+	sendPackageToAllInRoomBut(data,exceptionClient){
+		for(var i = 0;i<this.clients.length;i++){
+			if(this.clients[i].id != exceptionClient.id){
+				this.clients[i].send(JSON.stringify(data))
+			}
+		}
+	}
 }
 class Client {
 	static #idCount = 0;
