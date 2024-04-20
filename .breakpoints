@@ -1,11 +1,11 @@
 {
   "files": {
-    "index.js": [
+    "client/scripts/serverBrowser.js": [
       {
-        "id": "8a70f8e5-73e7-4072-82a8-38be6709d03b",
-        "line": 64,
-        "version": 1240,
-        "index": 1451
+        "id": "d1de2b79-b227-49a2-96fe-289f4e3fcc2f",
+        "line": 6,
+        "version": 456,
+        "index": 229
       }
     ]
   }

@@ -12,6 +12,7 @@ class Pen {
         this.color = "#000000";
         this.down = false;
         this.lastPosition = null;
+        this.actions = [];
     }
     press() {
         this.down = true;
@@ -41,7 +42,12 @@ class Pen {
                 break;
             }
             case "fill": {
-                this.floodFill(this.position.x,this.position.y)
+                this.floodFill(this.position.x,this.position.y);
+                this.actions.push({
+                    mode: "fill",
+                    color: color,
+                    position: this.position,
+                });
                 break;
             }
             case "erase": {
@@ -50,28 +56,36 @@ class Pen {
             }
         }
     }
-    executeDraw(color = this.color) {
+    executeDraw(color = this.color, x = this.position.x, y=this.position.y,px=this.lastPosition?.x || null,py=this.lastPosition?.y || null,radius=this.radius, server=true) {
         this.ctx.fillStyle = color;
         this.ctx.beginPath();
-        this.ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI, true);
+        this.ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
         this.ctx.closePath();
         this.ctx.fill();
-        if(this.lastPosition) {
+        if(px && py) {
             this.ctx.beginPath();
-            this.ctx.moveTo(this.position.x, this.position.y)
-            this.ctx.lineTo(this.lastPosition.x, this.lastPosition.y);
-            this.ctx.lineWidth = this.radius * 2;
+            this.ctx.moveTo(x, y)
+            this.ctx.lineTo(px, py);
+            this.ctx.lineWidth = radius * 2;
             this.ctx.lineCap = "round"; //for rounded courners
             this.ctx.strokeStyle = color;
             this.ctx.stroke();
         }
-        this.lastPosition = {x:this.position.x,y:this.position.y};
+        this.lastPosition = {x:x,y:y};
+        if(server){
+            this.actions.push({
+                mode: "pen",
+                color: color,
+                radius: radius,
+                position: this.position,
+                lastPosition: this.lastPosition,
+            });
+        }
     }
     setColor(color) {
         this.color = color;
     }
     setMode(mode) {
-        console.log(mode);
         this.mode = mode;
     }
     setSize(size) {
@@ -130,5 +144,26 @@ class Pen {
         const b = parseInt(hex.substring(4, 6), 16);
         
         return [r, g, b, 1];
+    }
+    recreateActions(actions=[]) {
+        for(let action of actions) {
+            if(action.mode === "pen") {
+                this.executeDraw(
+                    action.color,
+                    action.position.x,
+                    action.position.y,
+                    action.previousPosition.x,
+                    action.previousPosition.y,
+                    action.radius,
+                    false
+                );
+            } else if(action.mode === "fill") {
+                this.floodFill(
+                    action.position.x,
+                    action.position.y,
+                    action.color,
+                );
+            }
+        }
     }
 }

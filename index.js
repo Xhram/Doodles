@@ -4,6 +4,9 @@ var url = require('url');
 const ws = require('ws');
 const port = 8080;
 
+
+words = fs.readFileSync('words.txt', 'utf8').split('\n');
+
 function writeHeaders(response){
 	response.setHeader('Access-Control-Allow-Origin', '*');
 	response.setHeader('Access-Control-Request-Method', '*');
@@ -52,16 +55,24 @@ function Request(request,response){
 		response.properEnd();
 	} else if(request.method === 'GET'){
 		var urlData = url.parse(request.url, true);
-		if(urlData.pathname == "/api/roomslist"){
+		if(urlData.pathname.startsWith("/api/roomslist")){
 			response.setHeader("Content-Type","application/javascript; charset=utf-8")
 			package = {
 				rooms:[]
 			}
+			// for(var i = 0; i<randInt(3,15);i++){
+			// 	package.rooms.push({
+			// 		name:"test server " + i,
+			// 		playerCount:randInt(0,8),
+			// 		round:randInt(0,3),
+			// 		roomId:i+4
+			// 	})
+			// }
 			for(var i = 0; i < Rooms.length; i++){
 				var room = Rooms[i];
 				package.rooms.push({
 					name:room.name,
-					peopleCount:room.clients.length,
+					playerCount:room.clients.length,
 					round:room.round,
 					roomId:room.id
 				})
@@ -70,7 +81,6 @@ function Request(request,response){
 			response.properEnd()
 			
 		} else {
-			console.log(request.url)
 			var path = "./client"+urlData.pathname;
 			if(path.endsWith("/")){
 				path+="index.html"
@@ -110,6 +120,10 @@ function Request(request,response){
 
 	
 }
+function randInt(min, max){
+	return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 
 var server = http.createServer(Request);
 server.listen(port);
@@ -220,6 +234,9 @@ class Client {
 		this.score = 0;
 		Clients.push(this)
 	}
+	send(data){
+		this.ws.send(data)
+	}
 }
 
 
@@ -234,6 +251,14 @@ function webSocketConnect(webSocket){
 		}
 		if(webSocket.hasInit){
 			//add later
+			var client = webSocket.client;
+			if(package.type == "broadcast"){
+				client.room.sendPackageToAllInRoomBut({
+					type:"broadcast",
+					author:client.id,
+					message:package.message
+				},client)
+			}
 		} else {
 			if(package.type == "init"){
 				webSocket.hasInit = true;

@@ -1,6 +1,8 @@
 body {
     --header-color: var(--primary);
     --players-color: var(--primary);
+    --players-sec-color: #fafafa;
+    --input-field: var(--primary);
     --chat-color: var(--primary);
     background: var(--background);
 }
@@ -52,12 +54,25 @@ body {
     grid-column: span 2;
     height: 100%;
     border-bottom-left-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0.6rem 0.3rem;
+    justify-content: flex-start;
+    overflow: auto;
+    gap: 0.6rem;
 }
 .container .chat {
     background-color: var(--chat-color);
     grid-column: span 4;
     height:100%;
     border-bottom-right-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: auto;
+    gap: 0.1rem;
 }
 .container .tools {
     display: flex;
@@ -90,4 +105,76 @@ body {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+.player {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    min-width: 100%;
+    padding: 0.1rem 0.3rem;
+    background: var(--players-sec-color);
+    border-radius: 0.4rem;
+    font-size: 0.8rem;
+}
+.player name {
+    width: 100%;
+}
+.player score{
+    width: 100%;
+    font-size: 0.5rem;
+    font-weight: bold;
+    color: #aaa;
+}
+
+.chat-box {
+    display: flex;
+    align-items:center;
+    justify-content: flex-end;
+    flex-direction: column;
+    padding: 0.6rem 0.3rem;
+    background: #fff;
+    height: 100%;
+    width: 100%;
+    gap: 0.1rem;
+    overflow-y: auto;
+}
+msg {
+    width: 100%;
+    font-size: 0.6rem;
+    padding: 0 0.2rem;
+    background: #aaa;
+    border-bottom: solid 1px #bbb;
+    border-radius: 4px;
+    overflow-x:hodden;
+    word-wrap: break-word;
+}
+msg user {
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.input-field {
+    width: 100%;
+    padding: 0.3rem;
+    margin-top: 0.3rem;
+    background: var(--input-field);
+    display: flex;
+    flex-direction: row;
+}
+#chat-input {
+    height: 100%;
+    width: 70%;
+    outline: none;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.1rem;
+}
+#chat-input:active {
+    outline: none;
+}
+.input-field button {
+    cursor: pointer;
+    width: 30%;
+    height: 100%;
+    background: var(--background);
+    border: none;
+    font-size: 0.65rem;
 }
