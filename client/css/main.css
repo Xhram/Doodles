@@ -57,6 +57,9 @@
     --COLOR_PLAYER_BG_ALT: #ececec;
     --COLOR_PLAYER_BG_GUESSED_BASE: #5bdd4a;
     --COLOR_PLAYER_BG_GUESSED_ALT: #48c737;
+
+    --WRAPPER_HEIGHT:min(66vw,calc(100vh - 17px));
+    --WRAPPER_WIDTH:min(150vh,calc(100vw - 16px));
 }
 
 .outfit {
@@ -446,6 +449,7 @@ button {
     font-size: 14px;
     padding: 0.2rem;
     word-wrap: break-word;
+    
 }
 .chat-message:nth-child(even) {
     background-color: var(--COLOR_CHAT_BG_ALT);
@@ -457,4 +461,5 @@ button {
     align-items: stretch;
     justify-content: flex-start;
     word-wrap: break-word;
+    max-height: calc(var(--WRAPPER_HEIGHT)*(2.3 / 3)*(2.77 / 3));
 }

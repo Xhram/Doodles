@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "a remake of scribbles.io but with out ads and unblocked based on the fact it is free to run anywhere",
   "main": "index.js",
-
   "author": "Xhram",
   "license": "ISC",
   "type": "module",
