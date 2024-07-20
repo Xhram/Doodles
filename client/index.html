@@ -1,17 +1,215 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Main</title>
-        <link href="./root.css" rel="stylesheet" type="text/css" />
-        <link href="./main.css" rel="stylesheet" type="text/css" />
+        <meta charset="UTF-8" />
+        <title>Doodle Hub</title>
+        <link rel="icon" href="./favicon.png" type="image/x-icon" />
+        <link href="css/main.css" rel="stylesheet" type="text/css" />
+    </head>
     <body>
-        <h1>DOODLES</h1><button onclick="createServer()">Create Server</button>
-        <div id="serverList">
-			Loading...
-		</div>
+        <div id="setup-page" class="hide">
+            <div class="title">
+                <span class="a">D</span><span class="b">o</span>
+                <span class="c">o</span><span class="d">d</span>
+                <span class="e">l</span><span class="f">e</span>
+                <span class="g">.</span><span class="h">i</span>
+                <span class="i">o</span>
+            </div>
+
+            <div id="setupBox">
+                <input
+                    class="input-name outfit-700"
+                    type="text"
+                    spellcheck="false"
+                    autocomplete="off"
+                    placeholder="Enter your name"
+                    maxlength="21"
+                    data-translate="placeholder"
+                />
+                <div class="avatar-customizer">
+                    <div class="arrows left">
+                        <div class="arrow left" data-avatar-index="1"></div>
+                        <div class="arrow left" data-avatar-index="2"></div>
+                        <div class="arrow left" data-avatar-index="0"></div>
+                    </div>
+                    <div class="container">
+                        <div class="avatar fit">
+                            <div
+                                class="color"
+                                style="background-position: -200% 0%"
+                            ></div>
+                            <div
+                                class="eyes"
+                                style="background-position: 0% -500%"
+                            ></div>
+                            <div
+                                class="mouth"
+                                style="background-position: -200% -300%"
+                            ></div>
+                            <div class="special" style="display: none"></div>
+                            <div class="owner" style="display: none"></div>
+                        </div>
+                    </div>
+                    <div class="arrows right">
+                        <div class="arrow right" data-avatar-index="1"></div>
+                        <div class="arrow right" data-avatar-index="2"></div>
+                        <div class="arrow right" data-avatar-index="0"></div>
+                    </div>
+                    <div
+                        class="randomize"
+                        data-tooltip="Randomize your Avatar!"
+                        data-tooltipdir="N"
+                        onclick="randomAvatar()"
+                    ></div>
+                </div>
+                <button class="button-play" id="play-button">
+                    Create Room
+                </button>
+            </div>
+        </div>
+        <div id="game-container">
+            <div class="game-wrapper">
+                <div class="game-chat">
+                    <div class="game-chat-messages">
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner eveyyyyyyyyyyyy lopnhasdf sagsdfg
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner eveyyyyyyyyyyyy lopnhasdf sagsdfg
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner eveyyyyyyyyyyyy lopnhasdf sagsdfg
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner eveyyyyyyyyyyyy lopnhasdf sagsdfg
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner eveyyyyyyyyyyyy lopnhasdf sagsdfg
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner eveyyyyyyyyyyyy lopnhasdf sagsdfg
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner eveyyyyyyyyyyyy lopnhasdf sagsdfg
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner eveyyyyyyyyyyyy lopnhasdf sagsdfg
+                        </div>
+                        <div class="chat-message">
+                            Xhram is the new room owner
+                        </div>
+                    </div>
+                    <div class="game-chat-input">
+                        <input
+                            type="text"
+                            autocomplete="off"
+                            placeholder="Type your guess here..."
+                            maxlength="100"
+                            data-translate="placeholder"
+                            class="outfit"
+                        />
+                    </div>
+                </div>
+                <div class="game-player-list"></div>
+                <div class="game-invite">
+                    <div class="link-overlay non-selectable">
+                        Click Here To Copy Invite Link
+                    </div>
+                    <div class="game-link http://localhost:8080/?TgRtHke" onclick="copyLink()">
+                        <a id="game-link" class="non-selectable" >http://localhost:8080/?sjndFf</a>
+                    </div>
+                </div>
+                <div class="game-center">
+                    <div class="game-canvas-tools"></div>
+                    <div class="game-canvas"></div>
+                </div>
+                <div class="game-title">
+                    <div class="game-bar"></div>
+                    <div class="title">
+                        <span class="a">D</span><span class="b">o</span>
+                        <span class="c">o</span><span class="d">d</span>
+                        <span class="e">l</span><span class="f">e</span>
+                        <span class="g">.</span><span class="h">i</span>
+                        <span class="i">o</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="./jquery"></script>
+        <script src="./js/avatar.js" defer></script>
+        <script src="./js/network.js"></script>
+        <script src="./js/customLobbyValidtor.js"></script>
+        <script src="./js/roomLink.js"></script>
+        <script src="./js/chat.js"></script>
+        <script src="./js/game.js"></script>
     </body>
-	<script src="./scripts/serverBrowser.js"></script>
-    <script src="./scripts/urlData.js"></script>
 </html>

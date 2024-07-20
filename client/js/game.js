@@ -1,0 +1,4 @@
+joinGame()
+function joinGame(){
+    setRoomURL()
+}
