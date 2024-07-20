@@ -1,6 +1,16 @@
 var l = console.log
 
-var userAvatar = [5,2,6]
+var userAvatar = [0,0,0]
+if(localStorage.getItem("userAvatar") != undefined){
+    userAvatar = localStorage.getItem("userAvatar").split(",")
+    for (let i = 0; i < userAvatar.length; i++) {
+        userAvatar[i] = parseInt(userAvatar[i]);
+    }
+    updateAvatar();
+} else {
+    randomAvatar()
+}
+
 
 /**
  * 
@@ -47,4 +57,6 @@ function updateAvatar(){
         userAvatar[2] = 50;
     }
     $(".avatar-customizer .container .avatar .mouth")[0].style = `background-position: -${userAvatar[2]%10}00% -${Math.floor(userAvatar[2]/10)}00%`
+
+    localStorage.setItem("userAvatar",userAvatar.toString())
 }
