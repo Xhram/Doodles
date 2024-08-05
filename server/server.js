@@ -120,7 +120,6 @@ class DoodleServer {
             );
             httpResponse.write(fs.readFileSync(pathname));
             httpResponse.properEnd();
-            l(pathname);
         }
         if (httpRequest.method == "POST") {
             let body = "";
