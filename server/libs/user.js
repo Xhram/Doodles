@@ -6,6 +6,7 @@ import { GameServer } from './gameServer.js';
 class User{
     /**
      * @property {string} id
+     * @property {string} name
      * @property {number} score
      * @property {boolean} isDrawing
      * @property {boolean} isHost
@@ -15,6 +16,7 @@ class User{
      * @property {number[3]} cosmetics
      */
     id;
+    name;
     score;
     isDrawing;
     isHost;
@@ -38,6 +40,17 @@ class User{
         this.cosmetics = [0,0,0];
         if(this.gameServer.users.length == 0){
             this.isHost = true;
+        }
+    }
+    getUserData(){
+        return {
+            id:this.id,
+            name:this.name,
+            score:this.score,
+            cosmetics:this.cosmetics,
+            isHost:this.isHost,
+            isDrawing:this.isDrawing,
+            
         }
     }
 }

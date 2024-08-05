@@ -14,6 +14,7 @@ class GameServer{
     code;
     doodleServer;
     users;
+    
     /**
      * 
      * @param {DoodleServer} doodleServer 
