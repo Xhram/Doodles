@@ -1,27 +1,33 @@
 import { DoodleServer } from "../server.js";
 import {generateUrlSafeString} from "../utils/randomStringGen.js"
+import WebSocket from 'ws';
+import { User } from "./user.js";
+
 
 
 class GameServer{
     /**
      * @property {string} code
      * @property {DoodleServer} doodleServer
+     * @property {User[]} users
      */
     code;
     doodleServer;
+    users;
     /**
      * 
      * @param {DoodleServer} doodleServer 
      */
     constructor(doodleServer){
         this.doodleServer = doodleServer;
-        generateCode();
+        this.generateCode();
+        this.users = [];
     }
     generateCode(){
         this.code = generateUrlSafeString(7)
         codeSearch: while(true){
             /**
-             * @let {boolean} isCodeUnique
+             * @var {boolean} isCodeUnique
              */
             let isCodeUnique = true;
             for(var i = 0;i < this.doodleServer.gameServers.length;i++){
@@ -39,6 +45,17 @@ class GameServer{
         
         
     }
+    /**
+     * 
+     * @param {WebSocket} ws 
+     */
+    userConnect(ws){
+        let newUser = new User(ws,this)
+        this.users.push(newUser)
+        console.log(this)
+    }
+
+    
 
 
 }

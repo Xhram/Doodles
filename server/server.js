@@ -12,6 +12,7 @@ import { l } from "./utils/fastLog.js";
 
 import { GameServer } from "./libs/gameServer.js";
 
+import WebSocket, { WebSocketServer } from 'ws';
 //MIGHT CHANGE
 import generalConfig from "./configs/generalConfig.json" with { type: "json" };
 import path from "node:path";
@@ -28,12 +29,13 @@ class DoodleServer {
      * @property {http.Server} httpServer
      * @property {SafePathFinder} safePathFinder
      * @property {GameServer[]} gameServers
+     * @property {WebSocketServer} wss
      */
     static instance = undefined;
     port;
     httpServer;
     safePathFinder;
-
+    wss;
     gameServers;
 
     constructor(options) {
@@ -42,7 +44,8 @@ class DoodleServer {
         }
         options = options == undefined ? {} : options;
         this.port = options.port;
-        this.gameServers = [new GameServer()];
+        this.gameServers = [];
+        this.gameServers.push(new GameServer(this));
         l(this.gameServers[0].code);
 
         this.safePathFinder = new SafePathFinder(generalConfig.clientFilesPath);
@@ -56,9 +59,42 @@ class DoodleServer {
         console.log(
             "http://localhost" + (this.port != undefined ? ":" + this.port : "")
         );
+        this.wss = new WebSocketServer({server:this.httpServer})
+        this.wss.on("connection",this.onWebsocketConnection);
 
         DoodleServer.instance = this;
     }
+    /**
+     * 
+     * @param {WebSocket} ws 
+     * @param {http.IncomingMessage} request
+     */
+    onWebsocketConnection(ws,request){
+        /**
+         * @var {DoodleServer} doodleServer
+         * @var {string} code
+         */
+        var doodleServer = DoodleServer.instance;
+
+        var code = url.parse(request.url).query;
+        if(code == undefined){
+            ws.close(400,"code is needed")
+        }
+        for (let i = 0; i < doodleServer.gameServers.length; i++) {
+            /**
+             * @var {GameServer} gameServer
+            */
+            var gameServer = doodleServer.gameServers[i];
+            if(gameServer.code == code){
+                gameServer.userConnect(ws);
+                return;
+            }
+        }
+        ws.close(404,"game server with provided code was not found")
+        
+    }
+
+
     /**
      *
      * @param {http.ServerResponse} httpResponse
@@ -161,8 +197,19 @@ class DoodleServer {
             });
             httpResponse.properEnd();
         }
+        if (data.type == "create room"){
+            httpResponse.writeJSON({
+                type: "connect code",
+                code:doodleServer.createRoom()
+            });
+            httpResponse.properEnd();
+        }
     }
-
+    /**
+     * 
+     * @param {string} code 
+     * @returns {boolean}
+     */
     partyCodeValidationCheck(code) {
         var doodleServer = DoodleServer.instance;
 
@@ -173,6 +220,16 @@ class DoodleServer {
             }
         }
         return false;
+    }
+    /**
+     * 
+     * @returns {string}
+     */
+    createRoom(){
+        var doodleServer = DoodleServer.instance;
+        let newServer = new GameServer(doodleServer)
+        doodleServer.gameServers.push(newServer)
+        return newServer.code;
     }
 }
 
