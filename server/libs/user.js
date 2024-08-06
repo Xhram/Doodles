@@ -40,7 +40,18 @@ class User{
         this.cosmetics = [0,0,0];
         if(this.gameServer.users.length == 0){
             this.isHost = true;
-        }
+        }//switch to client side inshation of init package
+        this.sendToUser({
+            type:"init",
+            roomCode:this.gameServer.code,
+            id:this.id,
+            users: gameServer.users.map((user) => {
+                return user.getUserData()
+            })
+        })
+    }
+    sendToUser(data){
+        this.ws.send(JSON.stringify(data))
     }
     getUserData(){
         return {
