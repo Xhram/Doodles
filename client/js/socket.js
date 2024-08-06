@@ -35,5 +35,11 @@ function onWsMessage(rawMessageData){
 
     let data = JSON.parse(rawMessageData.data);
     console.log(data);
+    if(data.type == "init"){
+        user.id = data.id;
+        playersList = data.users
+        gameInitalized();
+        addChatMessage("Welcome to doodles!!","*font-weight:700; color:peru;")
+    }
 
 }

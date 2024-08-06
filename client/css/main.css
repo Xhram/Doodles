@@ -321,6 +321,8 @@ button {
     border-radius: 0px;
     border-bottom-left-radius: var(--BORDER_RADIUS);
     border-bottom-right-radius: var(--BORDER_RADIUS);
+    height: 100%;
+    font-size: 1em;
 }
 .game-chat-input input:focus {
     outline: none;
@@ -448,9 +450,10 @@ button {
     font-size: 14px;
     padding: 0.2rem;
     word-wrap: break-word;
+    padding-left:0.3rem ;
     
 }
-.chat-message:nth-child(even) {
+.chat-message:nth-child(odd) {
     background-color: var(--COLOR_CHAT_BG_ALT);
 }
 .game-chat-messages{

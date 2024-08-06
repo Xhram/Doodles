@@ -30,3 +30,8 @@ function connectToRoom(){
     $("#play-button")[0].classList.remove("loading")
     
 }
+
+function gameInitalized(){
+    $("#setup-page").hide();
+    $("#game-container").show();
+}
