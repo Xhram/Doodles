@@ -3,7 +3,7 @@ var playersList = []
 
 function updateUsername(){
     user.username = $("#username")[0].value
-    localStorage.setItem("username",username)
+    localStorage.setItem("user.username",user.username)
 }
 $("#username")[0].addEventListener("input",updateUsername)
 

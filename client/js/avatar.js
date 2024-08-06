@@ -1,6 +1,14 @@
 var l = console.log
 
-
+if(localStorage.getItem("user.avatar") != undefined){
+    user.avatar = localStorage.getItem("user.avatar").split(",")
+    for (let i = 0; i < user.avatar.length; i++) {
+        user.avatar[i] = parseInt(user.avatar[i]);
+    }
+    updateAvatar();
+} else {
+    randomAvatar()
+}
 /**
  * 
  * @param {PointerEvent} event 
