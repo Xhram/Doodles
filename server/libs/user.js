@@ -6,7 +6,7 @@ import { GameServer } from './gameServer.js';
 class User{
     /**
      * @property {string} id
-     * @property {string} name
+     * @property {string} username
      * @property {number} score
      * @property {boolean} isDrawing
      * @property {boolean} isHost
@@ -16,7 +16,7 @@ class User{
      * @property {number[3]} cosmetics
      */
     id;
-    name;
+    username;
     score;
     isDrawing;
     isHost;
@@ -38,17 +38,16 @@ class User{
         this.ws = ws;
         this.gameServer = gameServer;
         this.cosmetics = [0,0,0];
+        this.username = "";
         if(this.gameServer.users.length == 0){
             this.isHost = true;
         }//switch to client side inshation of init package
-        this.sendToUser({
-            type:"init",
-            roomCode:this.gameServer.code,
-            id:this.id,
-            users: gameServer.users.map((user) => {
-                return user.getUserData()
-            })
-        })
+        ws.user = this
+        ws.onmessage = (...args) => {
+            console.log(ws.user)
+            ws.user.onMessage.apply(ws.user,args);
+        };
+
     }
     sendToUser(data){
         this.ws.send(JSON.stringify(data))
@@ -56,12 +55,37 @@ class User{
     getUserData(){
         return {
             id:this.id,
-            name:this.name,
+            name:this.username,
             score:this.score,
             cosmetics:this.cosmetics,
             isHost:this.isHost,
             isDrawing:this.isDrawing,
             
+        }
+    }
+    /**
+     * 
+     * @param {WebSocket.MessageEvent} message 
+     */
+    onMessage(message){
+        var data;
+        try {
+            data = JSON.parse(message.data);
+
+            if(data.type == "init"){
+                this.username = data.username
+                this.cosmetics = data.avatar
+                this.sendToUser({
+                    type:"init",
+                    roomCode:this.gameServer.code,
+                    id:this.id,
+                    users: this.gameServer.users.map((user) => {
+                        return user.getUserData()
+                    })
+                })
+            }
+        } catch (error){
+            console.log(error)
         }
     }
 }
