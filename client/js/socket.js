@@ -41,5 +41,8 @@ function onWsMessage(rawMessageData){
         gameInitalized();
         addChatMessage("Welcome to doodles!!","*font-weight:700; color:peru;")
     }
+    if(data.type == "message"){
+        addChatMessageFromUser(data.message,data.author.username);
+    }
 
 }

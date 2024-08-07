@@ -10,6 +10,7 @@ class User{
      * @property {number} score
      * @property {boolean} isDrawing
      * @property {boolean} isHost
+     * @property {boolean} hasSolved
      * @property {number} joinTime
      * @property {WebSocket} ws
      * @property {GameServer} gameServer
@@ -20,6 +21,7 @@ class User{
     score;
     isDrawing;
     isHost;
+    hasSolved;
     joinTime;
     cosmetics;
     ws;
@@ -39,6 +41,7 @@ class User{
         this.gameServer = gameServer;
         this.cosmetics = [0,0,0];
         this.username = "";
+        this.hasSolved = false;
         if(this.gameServer.users.length == 0){
             this.isHost = true;
         }//switch to client side inshation of init package
@@ -82,6 +85,21 @@ class User{
                     users: this.gameServer.users.map((user) => {
                         return user.getUserData()
                     })
+                })
+            }
+            if(data.type == "message"){
+                this.gameServer.users.forEach((user) => {
+                    if(!(user.hasSolved == false && this.hasSolved == true) && this.id != user.id){
+                        user.sendToUser({
+                            type:"message",
+                            author:{
+                                username:this.username,
+                                id:this.id,
+                                hasSolved:this.hasSolved
+                            },
+                            message:data.message.replace(/</g,"").replace(/>/g,"")
+                        })
+                    }
                 })
             }
         } catch (error){

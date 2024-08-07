@@ -615,3 +615,6 @@ button {
         background: linear-gradient(to right, #53E237 0%, #219293 100%, #53E237 100%);
     }
 }
+.chat-username {
+    font-weight: 600;
+}
