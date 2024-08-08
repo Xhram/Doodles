@@ -14,7 +14,7 @@ class User{
      * @property {number} joinTime
      * @property {WebSocket} ws
      * @property {GameServer} gameServer
-     * @property {number[3]} cosmetics
+     * @property {number[3]} avatar
      */
     id;
     username;
@@ -23,7 +23,7 @@ class User{
     isHost;
     hasSolved;
     joinTime;
-    cosmetics;
+    avatar;
     ws;
     gameServer;
     /**
@@ -39,7 +39,7 @@ class User{
         this.isHost = false;
         this.ws = ws;
         this.gameServer = gameServer;
-        this.cosmetics = [0,0,0];
+        this.avatar = [0,0,0];
         this.username = "";
         this.hasSolved = false;
         if(this.gameServer.users.length == 0){
@@ -58,9 +58,9 @@ class User{
     getUserData(){
         return {
             id:this.id,
-            name:this.username,
+            username:this.username,
             score:this.score,
-            cosmetics:this.cosmetics,
+            avatar:this.avatar,
             isHost:this.isHost,
             isDrawing:this.isDrawing,
             
@@ -77,7 +77,7 @@ class User{
 
             if(data.type == "init"){
                 this.username = data.username
-                this.cosmetics = data.avatar
+                this.avatar = data.avatar
                 this.sendToUser({
                     type:"init",
                     roomCode:this.gameServer.code,
@@ -85,6 +85,14 @@ class User{
                     users: this.gameServer.users.map((user) => {
                         return user.getUserData()
                     })
+                })
+                this.gameServer.users.forEach((user) => {
+                    if(user.id != this.id){
+                        user.sendToUser({
+                            type:"player joinned",
+                            player:this.getUserData()
+                        })
+                    }
                 })
             }
             if(data.type == "message"){

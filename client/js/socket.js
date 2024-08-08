@@ -40,9 +40,14 @@ function onWsMessage(rawMessageData){
         playersList = data.users
         gameInitalized();
         addChatMessage("Welcome to doodles!!","*font-weight:700; color:peru;")
+        writePlayerListHtml(playersList);
     }
     if(data.type == "message"){
         addChatMessageFromUser(data.message,data.author.username);
+    }
+    if(data.type == "player joinned"){
+        playersList.push(data.player);
+        writePlayerListHtml(playersList);
     }
 
 }
