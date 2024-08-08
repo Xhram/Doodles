@@ -44,7 +44,7 @@ function writePlayerListHtml(users){
         playerListHtml += `<div class="player-listing" id="player-listing-id-${player.id}">
                         <div class="player-info">
                             <div class="left-info">
-                                <span class="rank">#${scoreRanks.indexOf(player.id)}</span>
+                                <span class="rank">#${scoreRanks.indexOf(player.id) + 1}</span>
                                 <div class="drawing" alt="drawing" style="${player.isDrawing?"":"display:none;"}"></div>
                             </div>
                             <div class="right-info">
